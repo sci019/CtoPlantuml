@@ -4,18 +4,11 @@ import re
 import sys
 
 
-# =========================================
-# Module: get_all_c_path.py
-# =========================================
-
 def fetch_c_file_paths(target_dir):
     search_pattern = os.path.join(target_dir, "**", "*.c")
     c_files = glob.glob(search_pattern, recursive=True)
     return c_files
 
-# =========================================
-# Module: research_func_in_file.py
-# =========================================
 
 def remove_comments(source_code):
     # ブロックコメント (/* ... */) の除去
@@ -485,12 +478,6 @@ def extract_functions_from_files(c_file_paths):
     return all_project_data
 
 
-
-
-# =========================================
-# Module: abstract_ir_generator.py
-# =========================================
-
 def convert_statements_to_nodes(statements_list, file_path):
     """
     ステートメントリスト全体を直列走査する主エントリポイント関数。
@@ -819,11 +806,6 @@ def generate_project_abstract_ir(all_project_data):
 
 
 
-
-# =========================================
-# Module: abstract_ir_linkers.py
-# =========================================
-
 def find_return_node_pointer(abstract_nodes):
     """
     呼び出し先関数のノードリストを末尾から逆方向に走査し、
@@ -974,14 +956,6 @@ def link_project_function_calls(abstracted_project_functions_list):
     return abstracted_project_functions_list
 
 
-
-
-
-
-
-# =========================================
-# Module: abstract_ir_scheduler.py
-# =========================================
 
 def build_function_lookup_map(abstracted_project_functions_list):
     """
@@ -1244,11 +1218,6 @@ def generate_execution_schedule(abstracted_project_functions_list):
     return scheduled_execution_list
 
 
-
-# =========================================
-# Module: output_plant_uml.py
-# =========================================
-
 def extract_target_function_name(content_str):
     """
     C言語の関数呼び出し文字列から、正規表現を用いて純粋な関数名のみを抽出する関数。
@@ -1457,11 +1426,6 @@ def execute_plantuml_translation(scheduled_execution_list, abstracted_project_fu
     write_lines_to_pu_file(all_lines, output_file_path)
 
 
-
-# =========================================
-# Module: main.py
-# =========================================
-
 def main():
     # 対象となるC言語ソースコードが格納されたディレクトリパスを設定
     target_directory = "../prj_test"
@@ -1469,22 +1433,22 @@ def main():
     # 出力先となるPlantUMLシーケンス図ファイルのパスを設定
     output_file_path = "output.pu"
     
-    # 抽出フェーズ：指定ディレクトリ以下のすべてのC言語ファイルパスを探索・取得
+    # 指定ディレクトリ以下のすべてのC言語ファイルパスを探索・取得
     c_file_list = fetch_c_file_paths(target_directory)
     
-    # 抽出フェーズ：取得したファイル群から関数定義および制御構造のネスト関係を抽出
+    # 取得したファイル群から関数定義および制御構造のネスト関係を抽出
     parsed_functions_list = extract_functions_from_files(c_file_list)
     
-    # 抽象化フェーズ：抽出データを言語非依存の抽象辞書オブジェクト（IR）へ変換
+    # 抽出データを言語非依存の抽象辞書オブジェクト（IR）へ変換
     abstracted_project_data = generate_project_abstract_ir(parsed_functions_list)
     
-    # リンクモジュール：抽象化ノード間に関数ジャンプおよび復帰の参照リンクを付与
+    # 抽象化ノード間に関数ジャンプおよび復帰の参照リンクを付与
     abstracted_project_data = link_project_function_calls(abstracted_project_data)
     
-    # スケジューリングフェーズ：時系列に平坦化した実行スケジュール配列を生成（内部でログ出力関数をコール）
+    # 時系列に平坦化した実行スケジュール配列を生成（内部でログ出力関数をコール）
     scheduled_execution_list = generate_execution_schedule(abstracted_project_data)
     
-    # 出力フェーズ：平坦化された時系列スケジュール構造からPlantUMLテキストファイルを1対1で機械的に生成
+    # 平坦化された時系列スケジュール構造からPlantUMLテキストファイルを1対1で機械的に生成
     execute_plantuml_translation(
         scheduled_execution_list,
         abstracted_project_data,
